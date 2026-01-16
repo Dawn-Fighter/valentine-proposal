@@ -23,7 +23,7 @@ function Envelope({ open, onOpenComplete }: { open: boolean; onOpenComplete: () 
   // Animation for the flap opening
   const { flapRotation } = useSpring({
     flapRotation: open ? -Math.PI * 0.8 : 0,
-    config: config.molasses,
+    config: { mass: 1, tension: 280, friction: 60 }, // "Wobbly" but controlled (faster than molasses)
     onRest: () => {
       if (open) onOpenComplete();
     }
@@ -31,13 +31,13 @@ function Envelope({ open, onOpenComplete }: { open: boolean; onOpenComplete: () 
 
   // Animation for the envelope flying in
   const { position, rotation } = useSpring({
-    from: { position: [0, -10, 0], rotation: [0.5, 0, 0] }, // Start tilted up slightly
+    from: { position: [0, -15, 0], rotation: [0.5, 0, 0] }, // Start lower
     to: { 
-      position: [0, -1, 0], // Center it better
-      rotation: [0, 0, 0] // Face camera directly
+      position: [0, -0.5, 0], // Center it perfectly
+      rotation: [0, 0, 0] 
     },
-    config: { tension: 120, friction: 14 },
-    delay: 200
+    config: { mass: 2, tension: 100, friction: 20 }, // Heavy, smooth entry
+    delay: 100
   });
 
   return (
@@ -96,16 +96,22 @@ export default function ThreeEnvelope({ onOpen }: { onOpen: () => void }) {
 
   return (
     <div className="absolute inset-0 z-10 pointer-events-none">
-      <Canvas shadows camera={{ position: [0, 0, 6], fov: 40 }}>
-        <ambientLight intensity={0.7} />
-        {/* Main Key Light */}
+      <Canvas 
+        shadows 
+        dpr={[1, 2]} // Optimize for high-DPI screens
+        gl={{ antialias: true, powerPreference: "high-performance" }}
+        camera={{ position: [0, 0, 6], fov: 40 }}
+      >
+        <ambientLight intensity={0.8} />
+        {/* Main Key Light - optimized shadow map */}
         <spotLight 
           position={[5, 5, 5]} 
           angle={0.25} 
           penumbra={1} 
-          intensity={1.5} 
+          intensity={1.2} 
           castShadow 
-          shadow-mapSize={[1024, 1024]} 
+          shadow-mapSize={[512, 512]} // Reduced from 1024 for performance
+          shadow-bias={-0.0001}
         />
         {/* Fill Light (Warm) */}
         <pointLight position={[-5, 0, 5]} intensity={0.5} color="#ffd1dc" />
@@ -119,11 +125,12 @@ export default function ThreeEnvelope({ onOpen }: { onOpen: () => void }) {
         
         <ContactShadows 
           position={[0, -2.5, 0]} 
-          opacity={0.5} 
-          scale={12} 
-          blur={2.5} 
-          far={5} 
-          color="#800020" // Burgundy tinted shadow
+          opacity={0.4} 
+          scale={10} 
+          blur={2} 
+          far={4} 
+          resolution={256} // Lower resolution for better performance
+          color="#601010"
         />
       </Canvas>
     </div>
