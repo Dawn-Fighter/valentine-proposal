@@ -9,6 +9,8 @@ import EscapingButton from "@/components/EscapingButton";
 import SarcasticNote from "@/components/SarcasticNote";
 import GoldCelebration from "@/components/GoldCelebration";
 import ThreeEnvelope from "@/components/ThreeEnvelope";
+import CursorHeartTrail from "@/components/CursorHeartTrail";
+import ValentineCountdown from "@/components/ValentineCountdown";
 import { sarcasticMessages } from "@/lib/messages"; // Restored import
 
 export default function Home() {
@@ -45,13 +47,15 @@ export default function Home() {
   return (
     <main className="relative min-h-screen w-full flex flex-col items-center justify-center p-4 overflow-hidden">
       <ElegantBackground />
+      <CursorHeartTrail />
+      <ValentineCountdown hide={step === "success"} />
       <GoldCelebration active={step === "success"} />
       <SarcasticNote 
         message={currentMessage} 
         onComplete={() => setCurrentMessage(null)} 
       />
 
-      <div className="z-10 w-full max-w-3xl flex flex-col items-center text-center space-y-8 md:space-y-12">
+      <div className="z-10 w-full max-w-3xl flex flex-col items-center text-center space-y-8 md:space-y-12 pt-24 md:pt-32">
         
         {/* Intro Text */}
         <AnimatePresence>
@@ -59,14 +63,14 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0, y: -20, transition: { duration: 1 } }} // Slower exit
+              exit={{ opacity: 0, y: -20, transition: { duration: 1 } }}
               className="space-y-4 md:space-y-6"
             >
               <motion.h2 
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }} // Slower duration (1s -> 1.5s)
-                className="text-3xl md:text-4xl font-playfair italic text-rich-wine/80"
+                transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
+                className="text-3xl md:text-5xl font-playfair italic text-deep-burgundy"
               >
                 Hey,
               </motion.h2>
